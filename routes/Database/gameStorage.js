@@ -1,3 +1,5 @@
+const localStorage = require("localStorage");
+
 
 
 function getGame() {

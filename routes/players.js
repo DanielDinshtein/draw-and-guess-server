@@ -12,15 +12,19 @@ router.get("/", function (req, res, next) {
 router.post("/login", async (req, res, next) => {
 
 	const username = req.body.username;
+	try {
+		const result = addPlayerToGame(username);
 
-	const result = addPlayerToGame(username);
+		if (result.invalidUsername) {
+			res.status(401).send({ status: 401, message: "Invalid username - Please enter different." });
+			
+		} else {
+			res.send({ success: true, newGame: result.newGame });
+		}
 
-	if (result.invalidUsername) {
-		res.send({ success: false, message: "Invalid username - Please enter different." });
-	} else {
-		res.send({ success: true, newGame: result.newGame });
+	} catch (err) {
+		next(err);
 	}
-
 });
 
 module.exports = router;
