@@ -1,0 +1,23 @@
+var express = require("express");
+var router = express.Router();
+
+const { getPlayersGames } = require('./service/gamesService');
+
+
+router.get("/playerName", async (req, res, next) => {
+
+    const username = req.body.username;
+    try {
+
+        const games = await getPlayersGames(username);
+
+        res.status(200).send(games);
+
+    } catch (err) {
+        console.log("Hey err");
+        next(err);
+    }
+});
+
+
+module.exports = router;

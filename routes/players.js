@@ -6,10 +6,10 @@ router.get("/", function (req, res, next) {
 	res.send("respond with a resource");
 });
 
+
 router.post("/login", async (req, res, next) => {
 	const username = req.body.username;
 
-	
 });
 
 module.exports = router;
