@@ -25,8 +25,5 @@ async function getGamesByPlayer(player) {
         await closeConnection();
     }
 }
+exports.getGamesByPlayer = getGamesByPlayer;
 
-
-module.exports = {
-    getGamesByPlayer: getGamesByPlayer,
-}

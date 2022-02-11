@@ -1,4 +1,6 @@
-const { getGamesByPlayer } = require('../Database/gamesCollection');
+const { getGamesByPlayer } = require('../Database/gamesHistoryCollection');
+
+
 
 async function getPlayersGames(playerName) {
 
@@ -13,5 +15,4 @@ async function getPlayersGames(playerName) {
         throw err;
     }
 };
-
 exports.getPlayersGames = getPlayersGames;

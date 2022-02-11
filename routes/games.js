@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { getPlayersGames } = require('./service/gamesService');
+const { getPlayersGames } = require('./model/gamesModel');
 
 
 router.get("/playerName", async (req, res, next) => {

@@ -7,9 +7,11 @@ const dbName = process.env.DB_NAME;
 let client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
+
 async function closeConnection() {
     await client.close();
 }
+exports.closeConnection = closeConnection;
 
 
 async function getDB() {
@@ -30,9 +32,5 @@ async function getDB() {
         throw err;
     }
 }
+exports.getDB = getDB;
 
-
-module.exports = {
-    getDB: getDB,
-    closeConnection: closeConnection,
-}
