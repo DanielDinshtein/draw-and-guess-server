@@ -14,10 +14,10 @@ router.post("/login", async (req, res, next) => {
 	const username = req.body.username;
 	try {
 		const result = addPlayerToGame(username);
-
+		
 		if (result.invalidUsername) {
 			res.status(401).send({ status: 401, message: "Invalid username - Please enter different." });
-			
+
 		} else {
 			res.send({ success: true, newGame: result.newGame });
 		}
