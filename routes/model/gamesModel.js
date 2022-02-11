@@ -1,5 +1,13 @@
 const { getGamesByPlayer } = require('../Database/gamesHistoryCollection');
+const { setGame } = require('../Database/gameStorage');
 
+
+
+function clearGameDetails() {
+
+    setGame({});
+}
+exports.clearGameDetails = clearGameDetails;
 
 
 async function getPlayersGames(playerName) {

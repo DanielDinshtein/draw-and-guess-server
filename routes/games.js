@@ -1,7 +1,19 @@
 var express = require("express");
 var router = express.Router();
 
-const { getPlayersGames } = require('./model/gamesModel');
+const { getPlayersGames, clearGameDetails } = require('./model/gamesModel');
+
+
+router.post("/deleteGame", async (req, res, next) => {
+
+    try {
+        clearGameDetails();
+        res.status(200).send({ status: 200, message: "Game Deleted" });
+
+    } catch (err) {
+        console.log(err);
+    }
+});
 
 
 router.get("/playerName", async (req, res, next) => {
