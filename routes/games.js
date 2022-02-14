@@ -14,11 +14,13 @@ router.post("/draw", async (req, res, next) => {
 });
 
 router.post("/deleteGame", async (req, res, next) => {
+	const { all } = req.body;
 	try {
-		clearGameDetails();
-		res.status(200).send({ status: 200, message: "Game Deleted" });
+		const result = await clearGameDetails(all);
+		res.status(200).send({ status: 200, message: "Games Deleted", result: result });
 	} catch (err) {
 		console.log(err);
+		throw err;
 	}
 });
 

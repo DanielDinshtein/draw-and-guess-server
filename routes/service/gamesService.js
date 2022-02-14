@@ -1,7 +1,7 @@
-const { getGamesByPlayer, deletePendingGame } = require("../data/gamesData");
+const { getGamesByPlayer, clearGamesData } = require("../data/gamesData");
 
-function clearGameDetails() {
-	deletePendingGame();
+async function clearGameDetails(all) {
+	return await clearGamesData(all);
 }
 exports.clearGameDetails = clearGameDetails;
 

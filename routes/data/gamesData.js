@@ -1,6 +1,34 @@
 const localStorage = require("localStorage");
 const { getDB, closeConnection } = require("./DBConnector");
 
+/****   Testing & Helpers   ****/
+
+async function clearGamesData(all = false) {
+	let result;
+	try {
+		localStorage.removeItem("pendingGame");
+
+		if (!all) {
+			return;
+		}
+		const db = await getDB();
+
+		// execute find query
+		const collection = await db.collection("game-sessions");
+		result = await collection.remove({});
+	} catch (err) {
+		console.log("Error in setPendingGame");
+		console.log(err);
+		throw err;
+	} finally {
+		// close connection
+		await closeConnection();
+	}
+
+	return true;
+}
+exports.clearGamesData = clearGamesData;
+
 async function getGamesByPlayer(player) {
 	let result;
 	try {
@@ -72,41 +100,6 @@ async function setPendingGame(game) {
 }
 exports.setPendingGame = setPendingGame;
 
-async function deletePendingGame(game = "") {
-	let result;
-	try {
-		localStorage.removeItem("pendingGame");
-
-		if (!game) {
-			return;
-		}
-		const db = await getDB();
-
-		// execute find query
-		const collection = await db.collection("game-sessions");
-		result = await collection.insertOne(game);
-
-		if (result.acknowledged) {
-			let gameID = JSON.parse(JSON.stringify(result.insertedId));
-
-			game._id = gameID;
-			result["gameID"] = gameID;
-
-			localStorage.setItem("pendingGame", JSON.stringify(game));
-		}
-	} catch (err) {
-		console.log("Error in setPendingGame");
-		console.log(err);
-		throw err;
-	} finally {
-		// close connection
-		await closeConnection();
-	}
-
-	return result;
-}
-exports.deletePendingGame = deletePendingGame;
-
 /****   Active Game   ****/
 
 async function setActiveGame(game, unsetPending = true) {
@@ -114,23 +107,12 @@ async function setActiveGame(game, unsetPending = true) {
 	try {
 		const db = await getDB();
 
-		console.log(" ID Before replace : ");
-		console.log(game._id);
-
 		// execute find query
 		const collection = await db.collection("game-sessions");
-		//  NOTE: save vs. replaceOne ??
 		result = await collection.replaceOne({ _id: game._id }, game);
 
-		console.log(result);
-
 		if (result.acknowledged) {
-			let gameID = JSON.parse(JSON.stringify(result.insertedId));
-
-			if (gameID !== game._id) {
-				throw new Error("collection.save ->  not same gameID");
-			}
-			result["gameID"] = gameID;
+			result["gameID"] = game._id;
 
 			localStorage.setItem("activeGame", JSON.stringify(game));
 			if (unsetPending) {

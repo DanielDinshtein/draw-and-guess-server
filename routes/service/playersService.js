@@ -29,7 +29,7 @@ async function addPlayerToGame(username) {
 		//  TODO: Save user / gameID for health check
 	} else if (Object.keys(game).length != 0 && game.firstPlayer.username != username) {
 		player = new Player(username, "guess");
-		game.secondPlayer = player;
+		game.secondPlayer = new Player(username, "guess");
 
 		//  TODO: Notify to user / gameID for health check
 		resultFromData = await setActiveGame(game);
