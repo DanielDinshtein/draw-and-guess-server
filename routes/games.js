@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { getPlayersGames, clearGameDetails } = require("./model/gamesModel");
+const { getPlayersGames, clearGameDetails } = require("./service/gamesService");
 
 router.post("/draw", async (req, res, next) => {
 	const { username, word, wordPoints, canvasPath } = req.body;

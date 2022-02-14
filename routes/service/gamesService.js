@@ -1,5 +1,5 @@
-const { getGamesByPlayer } = require('../Database/gamesHistoryCollection');
-const { setGame } = require('../Database/gameStorage');
+const { getGamesByPlayer } = require('../data/gamesData');
+const { setGame } = require('../data/gamesData');
 
 
 
