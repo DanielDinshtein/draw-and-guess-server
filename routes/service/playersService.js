@@ -1,58 +1,51 @@
-const { getActiveGame, setActiveGame } = require("../data/gamesData");
+const { getPendingGame, setPendingGame, setActiveGame } = require("../data/gamesData");
 
-const { Player } = require("../../models/playerModel");
 const { Game } = require("../../models/gameModel");
+const { Player } = require("../../models/playerModel");
+const { GameTimes } = require("../../models/gameTimesModel");
 
 //  DELETE
-// const { getNewGame } = require("../../utils/helpers");
 
-function addPlayerToGame(username) {
+async function addPlayerToGame(username) {
 	if (!username) {
-		return { newGame: null, invalidUsername: true };
+		return { emptyUsername: true };
 	}
 
-	let newGame = true;
-	let invalidUsername = false;
+	let result;
+	let resultFromData;
 
-	let game = getActiveGame();
+	let player;
+	let gameID;
+	let game = getPendingGame();
 
 	if (Object.keys(game).length == 0) {
-		const player = new Player(username, "draw");
+		player = new Player(username, "draw");
 
 		// Init new Game
-		game = new Game(player);
+		game = new Game(player, new Player(), new GameTimes());
+
+		resultFromData = await setPendingGame(game);
+
+		//  TODO: Save user / gameID for health check
 	} else if (Object.keys(game).length != 0 && game.firstPlayer.username != username) {
-		const player = new Player(username, "guess");
+		player = new Player(username, "guess");
 		game.secondPlayer = player;
-		newGame = false;
+
+		//  TODO: Notify to user / gameID for health check
+		resultFromData = await setActiveGame(game);
 	} else {
 		return { invalidUsername: true };
 	}
 
-	//  Update Game Details
-	if (!invalidUsername) {
-		setActiveGame(game);
-	}
+	if (resultFromData.acknowledged) {
+		gameID = resultFromData.gameID;
 
-	return { newGame: newGame, invalidUsername: invalidUsername };
+		result = {
+			gameID: gameID,
+			player: player,
+		};
+	} // TODO: What if not acknowledged
+
+	return { result: result };
 }
 exports.addPlayerToGame = addPlayerToGame;
-
-// TODO: Remove - Test
-async function testSetGame(username) {
-	console.log("1 ", username);
-	let res;
-	try {
-		const player = new Player(username, "draw");
-		console.log("2");
-		// Init new Game
-		let game = new Game(player, new Player());
-		console.log("3");
-		res = await setActiveGame(game);
-	} catch (err) {
-		console.log(err);
-	}
-
-	return res;
-}
-exports.testSetGame = testSetGame;

@@ -1,37 +1,24 @@
 var express = require("express");
 var router = express.Router();
 
-const { addPlayerToGame, testSetGame } = require("./service/playersService");
+const { addPlayerToGame } = require("./service/playersService");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
 	res.send("respond with a resource");
 });
 
-router.post("/loginTest", async (req, res, next) => {
-	const username = req.body.username;
-	try {
-		const result = await testSetGame(username);
-
-		if (result) {
-			res.status(401).send({ status: 401, result: result });
-		} else {
-			res.send({ success: true, newGame: result });
-		}
-	} catch (err) {
-		next(err);
-	}
-});
-
 router.post("/login", async (req, res, next) => {
 	const username = req.body.username;
 	try {
-		const result = addPlayerToGame(username);
+		const result = await addPlayerToGame(username);
 
 		if (result.invalidUsername) {
 			res.status(401).send({ status: 401, message: "Invalid username - Please enter different." });
+		} else if (result.emptyUsername) {
+			res.status(400).send({ status: 400, message: "Invalid username - empty username." });
 		} else {
-			res.send({ success: true, newGame: result.newGame });
+			res.status(200).send({ status: 200, result: result });
 		}
 	} catch (err) {
 		next(err);

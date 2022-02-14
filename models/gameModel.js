@@ -1,12 +1,12 @@
 class Game {
-	constructor(firstPlayer, secondPlayer) {
+	constructor(firstPlayer, secondPlayer, gameTimes, canvasPath = [], currentWord = "", totalPoints = 0) {
 		this._id = null;
 		this.firstPlayer = firstPlayer;
 		this.secondPlayer = secondPlayer;
-		this.gameTimes = { timeStarted: "0", timeEnded: "0", totalTimePlayed: "0" };
-		this.canvasPath = [];
-		this.currentWord = "";
-		this.totalPoints = 0;
+		this.gameTimes = gameTimes;
+		this.canvasPath = canvasPath;
+		this.currentWord = currentWord;
+		this.totalPoints = totalPoints;
 	}
 }
 
