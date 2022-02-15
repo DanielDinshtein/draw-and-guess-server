@@ -3,47 +3,47 @@ var router = express.Router();
 
 const { STAGES } = require("../utils/constants");
 
-const { canChangeStage } = require("./service/healthService");
-
-let username;
-router.use(async function (req, res, next) {
-	username = req.query?.username;
-	next();
-});
+const { canChangeStage, setStagesState } = require("./service/healthService");
 
 router.get("/", function (req, res, next) {
 	res.status(200).send();
 });
 
-router.get("/waiting", function (req, res, next) {
-	if (canChangeStage(STAGES.WAITING, username)) {
-		res.status(500).send();
-	} else {
-		res.status(200).send();
-	}
-});
-
 router.get("/wordChoosing", function (req, res, next) {
-	if (canChangeStage(STAGES.WORD_CHOOSING, username)) {
+	if (canChangeStage(STAGES.WORD_CHOOSING)) {
 		res.status(500).send();
 	} else {
 		res.status(200).send();
 	}
 });
 
-router.get("/drawing", function (req, res, next) {
-	if (canChangeStage(STAGES.DRAWING, username)) {
-		res.status(500).send();
+router.post("/wordChoosing", function (req, res, next) {
+	const { changeState } = req.body;
+
+	if (changeState) {
+		setStagesState(STAGES.WORD_CHOOSING, false);
+		res.status(200).send({ status: 200, success: true });
 	} else {
-		res.status(200).send();
+		res.status(400).send({ status: 400, success: false });
 	}
 });
 
 router.get("/guessing", function (req, res, next) {
-	if (canChangeStage(STAGES.GUESSING, username)) {
+	if (canChangeStage(STAGES.GUESSING)) {
 		res.status(500).send();
 	} else {
 		res.status(200).send();
+	}
+});
+
+router.post("/guessing", function (req, res, next) {
+	const { changeState } = req.body;
+
+	if (changeState) {
+		setStagesState(STAGES.GUESSING, false);
+		res.status(200).send({ status: 200, success: true });
+	} else {
+		res.status(400).send({ status: 400, success: false });
 	}
 });
 

@@ -1,10 +1,12 @@
-const { onNewPendingGame } = require("./healthService");
+const { setStagesState } = require("./healthService");
 
 const { getPendingGame, addPendingGame, setActiveGame } = require("../data/gamesData");
 
 const { Game } = require("../../models/gameModel");
 const { Player } = require("../../models/playerModel");
 const { GameTimes } = require("../../models/gameTimesModel");
+
+const { STAGES } = require("../../utils/constants");
 
 async function addPlayerToGame(username) {
 	if (!username) {
@@ -18,36 +20,44 @@ async function addPlayerToGame(username) {
 	let gameID;
 	let game = getPendingGame();
 
+	// New Game & Player
 	if (Object.keys(game).length == 0) {
-		// New Game & Player
-
 		player = new Player(username, "draw");
 		game = new Game(player, new Player(), new GameTimes());
-
 		resultFromData = await addPendingGame(game);
 
-		onNewPendingGame(username);
+		console.log("1");
+		console.log(game);
 	} else if (Object.keys(game).length != 0 && game.firstPlayer.username != username) {
 		// New Player - start Game
+		console.log("2");
+		console.log(game);
 
 		player = new Player(username, "guess");
-		game.secondPlayer = new Player(username, "guess");
+		game["secondPlayer"] = player;
 		game.gameTimes = new GameTimes();
 
+		console.log("3");
+		console.log(game);
 		resultFromData = await setActiveGame(game);
-
-		onNewActiveGame(username);
 	} else {
 		return { invalidUsername: true };
 	}
 
 	if (resultFromData.acknowledged) {
+		console.log("4");
+		console.log(game);
 		gameID = resultFromData.gameID;
-
 		result = {
 			gameID: gameID,
 			player: player,
 		};
+		if (player.playerRole === "guess") {
+			setStagesState(STAGES.WORD_CHOOSING, true);
+		}
+
+		console.log("end");
+		console.log(game);
 	}
 
 	return { result: result };
