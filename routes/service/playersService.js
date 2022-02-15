@@ -1,10 +1,10 @@
-const { getPendingGame, setPendingGame, setActiveGame } = require("../data/gamesData");
+const { onNewPendingGame } = require("./healthService");
+
+const { getPendingGame, addPendingGame, setActiveGame } = require("../data/gamesData");
 
 const { Game } = require("../../models/gameModel");
 const { Player } = require("../../models/playerModel");
 const { GameTimes } = require("../../models/gameTimesModel");
-
-//  DELETE
 
 async function addPlayerToGame(username) {
 	if (!username) {
@@ -19,20 +19,24 @@ async function addPlayerToGame(username) {
 	let game = getPendingGame();
 
 	if (Object.keys(game).length == 0) {
-		player = new Player(username, "draw");
+		// New Game & Player
 
-		// Init new Game
+		player = new Player(username, "draw");
 		game = new Game(player, new Player(), new GameTimes());
 
-		resultFromData = await setPendingGame(game);
+		resultFromData = await addPendingGame(game);
 
-		//  TODO: Save user / gameID for health check
+		onNewPendingGame(username);
 	} else if (Object.keys(game).length != 0 && game.firstPlayer.username != username) {
+		// New Player - start Game
+
 		player = new Player(username, "guess");
 		game.secondPlayer = new Player(username, "guess");
+		game.gameTimes = new GameTimes();
 
-		//  TODO: Notify to user / gameID for health check
 		resultFromData = await setActiveGame(game);
+
+		onNewActiveGame(username);
 	} else {
 		return { invalidUsername: true };
 	}
@@ -44,7 +48,7 @@ async function addPlayerToGame(username) {
 			gameID: gameID,
 			player: player,
 		};
-	} // TODO: What if not acknowledged
+	}
 
 	return { result: result };
 }
