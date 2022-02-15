@@ -1,4 +1,5 @@
 const localStorage = require("localStorage");
+const { ObjectId } = require("mongodb");
 const { getDB, closeConnection } = require("./DBConnector");
 
 /****   Testing & Helpers   ****/
@@ -82,7 +83,7 @@ async function addPendingGame(game) {
 		if (result.acknowledged) {
 			let gameID = JSON.parse(JSON.stringify(result.insertedId));
 
-			game._id = gameID;
+			// game["_id"] = gameID;
 			result["gameID"] = gameID;
 
 			localStorage.setItem("pendingGame", JSON.stringify(game));
@@ -105,19 +106,21 @@ exports.addPendingGame = addPendingGame;
 async function setActiveGame(game, unsetPending = true) {
 	let result;
 	try {
-		const db = await getDB();
+		localStorage.setItem("activeGame", JSON.stringify(game));
+		if (unsetPending) {
+			localStorage.removeItem("pendingGame");
+		}
 
+		const db = await getDB();
 		// execute find query
 		const collection = await db.collection("game-sessions");
-		result = await collection.replaceOne({ _id: game._id }, game);
+
+		game._id = new ObjectId(game._id);
+
+		result = await collection.updateOne({ _id: game._id }, { $set: game });
 
 		if (result.acknowledged) {
 			result["gameID"] = game._id;
-
-			localStorage.setItem("activeGame", JSON.stringify(game));
-			if (unsetPending) {
-				localStorage.removeItem("pendingGame");
-			}
 		}
 	} catch (err) {
 		console.log("Error in setActiveGame");

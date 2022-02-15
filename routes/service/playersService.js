@@ -25,28 +25,19 @@ async function addPlayerToGame(username) {
 		player = new Player(username, "draw");
 		game = new Game(player, new Player(), new GameTimes());
 		resultFromData = await addPendingGame(game);
-
-		console.log("1");
-		console.log(game);
-	} else if (Object.keys(game).length != 0 && game.firstPlayer.username != username) {
+	} else if (Object.keys(game).length != 0 && game["firstPlayer"]["username"] != username) {
 		// New Player - start Game
-		console.log("2");
-		console.log(game);
 
 		player = new Player(username, "guess");
-		game["secondPlayer"] = player;
-		game.gameTimes = new GameTimes();
+		game["secondPlayer"] = new Player(username, "guess");
+		game["gameTimes"] = new GameTimes();
 
-		console.log("3");
-		console.log(game);
 		resultFromData = await setActiveGame(game);
 	} else {
 		return { invalidUsername: true };
 	}
 
 	if (resultFromData.acknowledged) {
-		console.log("4");
-		console.log(game);
 		gameID = resultFromData.gameID;
 		result = {
 			gameID: gameID,
@@ -55,9 +46,6 @@ async function addPlayerToGame(username) {
 		if (player.playerRole === "guess") {
 			setStagesState(STAGES.WORD_CHOOSING, true);
 		}
-
-		console.log("end");
-		console.log(game);
 	}
 
 	return { result: result };
