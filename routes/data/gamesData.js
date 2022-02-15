@@ -17,7 +17,7 @@ async function clearGamesData(all = false) {
 		const collection = await db.collection("game-sessions");
 		result = await collection.remove({});
 	} catch (err) {
-		console.log("Error in setPendingGame");
+		console.log("Error in clearGamesData");
 		console.log(err);
 		throw err;
 	} finally {
@@ -70,7 +70,7 @@ function getPendingGame() {
 }
 exports.getPendingGame = getPendingGame;
 
-async function setPendingGame(game) {
+async function addPendingGame(game) {
 	let result;
 	try {
 		const db = await getDB();
@@ -88,7 +88,7 @@ async function setPendingGame(game) {
 			localStorage.setItem("pendingGame", JSON.stringify(game));
 		}
 	} catch (err) {
-		console.log("Error in setPendingGame");
+		console.log("Error in addPendingGame");
 		console.log(err);
 		throw err;
 	} finally {
@@ -98,7 +98,7 @@ async function setPendingGame(game) {
 
 	return result;
 }
-exports.setPendingGame = setPendingGame;
+exports.addPendingGame = addPendingGame;
 
 /****   Active Game   ****/
 
