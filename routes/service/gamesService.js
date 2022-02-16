@@ -1,4 +1,4 @@
-const { getGameByID, getGamesByPlayer, clearGamesData } = require("../data/gamesData");
+const { getGameByID, getGamesByPlayer, clearGamesData, setActiveGame } = require("../data/gamesData");
 
 async function clearGameDetails(all) {
 	return await clearGamesData(all);
@@ -48,3 +48,28 @@ async function initGameSession(gameID, username) {
 	return result;
 }
 exports.initGameSession = initGameSession;
+
+async function updateReceivedWordDetails(gameID, word, wordPoints) {
+	try {
+		const gameDetails = await getGameByID(gameID);
+
+		if (gameDetails.length === 0) {
+			return { gameNotFound: true };
+		}
+
+		gameDetails["drawingSessionDetails"]["currentWord"] = word;
+		gameDetails["drawingSessionDetails"]["wordPoints"] = wordPoints;
+
+		let resultFromData = await setActiveGame(gameDetails, false);
+
+		if (!resultFromData.acknowledged || resultFromData.modifiedCount !== 1) {
+			return { gameNotUpdated: true };
+		}
+
+		return { succuss: true };
+	} catch (err) {
+		console.log("Error in updateReceivedWordDetails()");
+		throw err;
+	}
+}
+exports.updateReceivedWordDetails = updateReceivedWordDetails;

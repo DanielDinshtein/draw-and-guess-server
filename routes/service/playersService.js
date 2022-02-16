@@ -2,9 +2,10 @@ const { setStagesState } = require("./healthService");
 
 const { getPendingGame, addPendingGame, setActiveGame } = require("../data/gamesData");
 
-const { Game } = require("../../models/gameModel");
-const { Player } = require("../../models/playerModel");
-const { GameTimes } = require("../../models/gameTimesModel");
+const { Game } = require("../../model/gameModel");
+const { Player } = require("../../model/playerModel");
+const { GameTimes } = require("../../model/gameTimesModel");
+const { DrawDetails } = require("../../model/drawDetails");
 
 const { STAGES } = require("../../utils/constants");
 
@@ -23,7 +24,7 @@ async function addPlayerToGame(username) {
 	// New Game & Player
 	if (Object.keys(game).length == 0) {
 		player = new Player(username, "draw");
-		game = new Game(player, new Player(), new GameTimes());
+		game = new Game(player, new Player(), new GameTimes(), new DrawDetails());
 		resultFromData = await addPendingGame(game);
 	} else if (Object.keys(game).length != 0 && game["firstPlayer"]["username"] != username) {
 		// New Player - start Game

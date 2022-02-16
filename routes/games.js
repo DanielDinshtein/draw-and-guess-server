@@ -1,13 +1,10 @@
 var express = require("express");
 var router = express.Router();
 
-const { initGameSession, getPlayersGames, clearGameDetails } = require("./service/gamesService");
+const { initGameSession, getPlayersGames, clearGameDetails, updateReceivedWordDetails } = require("./service/gamesService");
 
 router.post("/", async (req, res, next) => {
 	const { gameID, username } = req.body;
-	console.log(gameID);
-	console.log(username);
-
 	try {
 		const result = await initGameSession(gameID, username);
 
@@ -19,6 +16,23 @@ router.post("/", async (req, res, next) => {
 	} catch (err) {
 		console.log("Hey err");
 		next(err);
+	}
+});
+
+router.post("/chosenWord", async (req, res, next) => {
+	const { gameID, word, wordPoints } = req.body;
+	try {
+		const result = await updateReceivedWordDetails(gameID, word, wordPoints);
+
+		if (result.gameNotFound) {
+			res.status(404).send({ status: 404, message: "Game not found. Please try again" });
+		} else if (result.gameNotUpdated) {
+			res.status(400).send({ status: 400, message: "Game not updated. Something went wrong" });
+		} else if (result.succuss) {
+			res.status(200).send({ status: 200, message: "Game details updated" });
+		}
+	} catch (err) {
+		console.log(err);
 	}
 });
 
