@@ -112,8 +112,10 @@ async function getCanvasPaths(gameID) {
 			return { gameNotFound: true };
 		}
 		const { canvasPaths } = gameDetails["drawingSessionDetails"];
+		const { currentWord } = gameDetails["drawingSessionDetails"];
 
-		return { canvasPaths: canvasPaths };
+
+		return { canvasPaths, currentWord };
 	} catch (err) {
 		console.log("Error in getCanvasPaths()");
 		throw err;

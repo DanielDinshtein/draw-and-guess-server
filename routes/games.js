@@ -66,8 +66,8 @@ router.get("/guess", async (req, res, next) => {
 		const result = await getCanvasPaths(gameID);
 		if (result.gameNotFound) {
 			res.status(404).send({ status: 404, message: "Game not found. Please try again" });
-		} else if (result.canvasPaths) {
-			res.status(200).send({ status: 200, canvasPaths: result.canvasPaths });
+		} else if (result) {
+			res.status(200).send({ status: 200, result });
 		}
 	} catch (err) {
 		console.log(err);
