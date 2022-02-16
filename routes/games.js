@@ -8,6 +8,7 @@ const {
 	updateReceivedWordDetails,
 	updateReceivedCanvasPaths,
 	getCanvasPaths,
+	updateFinishGuess
 } = require("./service/gamesService");
 
 router.post("/", async (req, res, next) => {
