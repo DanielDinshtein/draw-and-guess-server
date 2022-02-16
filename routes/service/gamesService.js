@@ -103,3 +103,20 @@ async function updateReceivedCanvasPaths(gameID, wordPoints, canvasPaths) {
 	}
 }
 exports.updateReceivedCanvasPaths = updateReceivedCanvasPaths;
+
+async function getCanvasPaths(gameID) {
+	try {
+		const gameDetails = await getGameByID(gameID);
+
+		if (gameDetails.length === 0) {
+			return { gameNotFound: true };
+		}
+		const { canvasPaths } = gameDetails["drawingSessionDetails"];
+
+		return { canvasPaths: canvasPaths };
+	} catch (err) {
+		console.log("Error in getCanvasPaths()");
+		throw err;
+	}
+}
+exports.getCanvasPaths = getCanvasPaths;

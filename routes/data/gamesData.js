@@ -8,6 +8,7 @@ async function clearGamesData(all = false) {
 	let result;
 	try {
 		localStorage.removeItem("pendingGame");
+		localStorage.removeItem("activeGame");
 
 		if (!all) {
 			return;

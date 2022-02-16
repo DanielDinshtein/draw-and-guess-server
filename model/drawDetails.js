@@ -1,8 +1,8 @@
 class DrawDetails {
-	constructor(currentWord = "", wordPoints = 0, canvasPath = []) {
+	constructor(currentWord = "", wordPoints = 0, canvasPaths = []) {
 		this.currentWord = currentWord;
 		this.wordPoints = wordPoints;
-		this.canvasPath = canvasPath;
+		this.canvasPaths = canvasPaths;
 	}
 }
 
