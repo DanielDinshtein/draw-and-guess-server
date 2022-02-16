@@ -1,7 +1,26 @@
 var express = require("express");
 var router = express.Router();
 
-const { getPlayersGames, clearGameDetails } = require("./service/gamesService");
+const { initGameSession, getPlayersGames, clearGameDetails } = require("./service/gamesService");
+
+router.post("/", async (req, res, next) => {
+	const { gameID, username } = req.body;
+	console.log(gameID);
+	console.log(username);
+
+	try {
+		const result = await initGameSession(gameID, username);
+
+		if (result.gameNotFound) {
+			res.status(400).send({ status: 400, message: "Invalid gameID" });
+		} else {
+			res.status(200).send({ status: 200, result });
+		}
+	} catch (err) {
+		console.log("Hey err");
+		next(err);
+	}
+});
 
 router.post("/draw", async (req, res, next) => {
 	const { username, word, wordPoints, canvasPath } = req.body;

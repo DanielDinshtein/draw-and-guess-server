@@ -1,4 +1,4 @@
-const { getGamesByPlayer, clearGamesData } = require("../data/gamesData");
+const { getGameByID, getGamesByPlayer, clearGamesData } = require("../data/gamesData");
 
 async function clearGameDetails(all) {
 	return await clearGamesData(all);
@@ -28,3 +28,23 @@ async function updateReceivedDraw(playerName) {
 	}
 }
 exports.updateReceivedDraw = updateReceivedDraw;
+
+async function initGameSession(gameID, username) {
+	let result;
+	try {
+		const gameDetails = await getGameByID(gameID);
+
+		if (gameDetails.length == 0) {
+			return { gameNotFound: true };
+		}
+		result = {
+			id: gameDetails._id,
+			timeStarted: gameDetails.gameTimes.timeStarted,
+		};
+	} catch (err) {
+		console.log("Error in initGameSession()");
+		throw err;
+	}
+	return result;
+}
+exports.initGameSession = initGameSession;

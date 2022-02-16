@@ -52,6 +52,30 @@ async function getGamesByPlayer(player) {
 }
 exports.getGamesByPlayer = getGamesByPlayer;
 
+async function getGameByID(gameID) {
+	let result;
+
+	try {
+		const db = await getDB();
+
+		// execute find query
+		const collection = await db.collection("game-sessions");
+		const gameDetails = await collection.find({ _id: new ObjectId(gameID) }).toArray();
+
+		if (gameDetails.length !== 0) {
+			result = gameDetails[0];
+		}
+	} catch (err) {
+		console.log("Error in getGamesByPlayer()");
+		throw err;
+	} finally {
+		// close connection
+		await closeConnection();
+	}
+	return result;
+}
+exports.getGameByID = getGameByID;
+
 /****   Pending Game   ****/
 
 function getPendingGame() {
