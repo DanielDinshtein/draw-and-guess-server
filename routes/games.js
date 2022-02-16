@@ -74,6 +74,20 @@ router.get("/guess", async (req, res, next) => {
 	}
 });
 
+router.post("/guess", async (req, res, next) => {
+	const { gameID } = req.body;
+	try {
+		const result = await updateFinishGuess(gameID);
+		if (result.gameNotFound) {
+			res.status(404).send({ status: 404, message: "Game not found. Please try again" });
+		} else if (result) {
+			res.status(200).send({ status: 200, result });
+		}
+	} catch (err) {
+		console.log(err);
+	}
+});
+
 router.post("/deleteGame", async (req, res, next) => {
 	const { all } = req.body;
 	try {

@@ -114,7 +114,6 @@ async function getCanvasPaths(gameID) {
 		const { canvasPaths } = gameDetails["drawingSessionDetails"];
 		const { currentWord } = gameDetails["drawingSessionDetails"];
 
-
 		return { canvasPaths, currentWord };
 	} catch (err) {
 		console.log("Error in getCanvasPaths()");
@@ -122,3 +121,29 @@ async function getCanvasPaths(gameID) {
 	}
 }
 exports.getCanvasPaths = getCanvasPaths;
+
+async function updateFinishGuess(gameID) {
+	try {
+		const gameDetails = await getGameByID(gameID);
+
+		if (gameDetails.length === 0) {
+			return { gameNotFound: true };
+		}
+
+		const wordPoints = gameDetails["drawingSessionDetails"]["wordPoints"];
+		const newTotalPoints = gameDetails["totalPoints"] + wordPoints;
+		gameDetails["totalPoints"] = newTotalPoints;
+
+		let resultFromData = await setActiveGame(gameDetails, false);
+
+		if (!resultFromData.acknowledged || resultFromData.modifiedCount !== 1) {
+			return { gameNotUpdated: true };
+		}
+
+		return { succuss: true, newTotalPoints: newTotalPoints };
+	} catch (err) {
+		console.log("Error in updateReceivedCanvasPaths()");
+		throw err;
+	}
+}
+exports.updateFinishGuess = updateFinishGuess;
