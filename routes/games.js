@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { initGameSession, getPlayersGames, clearGameDetails, updateReceivedWordDetails } = require("./service/gamesService");
+const { initGameSession, getPlayersGames, clearGameDetails, updateReceivedWordDetails, updateReceivedCanvasPaths } = require("./service/gamesService");
 
 router.post("/", async (req, res, next) => {
 	const { gameID, username } = req.body;
@@ -37,10 +37,17 @@ router.post("/chosenWord", async (req, res, next) => {
 });
 
 router.post("/draw", async (req, res, next) => {
-	const { username, word, wordPoints, canvasPath } = req.body;
+	const { gameID, wordPoints, canvasPaths } = req.body;
 	try {
-		clearGameDetails();
-		res.status(200).send({ status: 200, message: "Game Deleted" });
+		const result = await updateReceivedCanvasPaths(gameID, wordPoints, canvasPaths);
+
+		if (result.gameNotFound) {
+			res.status(404).send({ status: 404, message: "Game not found. Please try again" });
+		} else if (result.gameNotUpdated) {
+			res.status(400).send({ status: 400, message: "Game not updated. Something went wrong" });
+		} else if (result.succuss) {
+			res.status(200).send({ status: 200, message: "Game details updated" });
+		}
 	} catch (err) {
 		console.log(err);
 	}

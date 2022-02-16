@@ -1,4 +1,8 @@
+const { setStagesState } = require("./healthService");
+
 const { getGameByID, getGamesByPlayer, clearGamesData, setActiveGame } = require("../data/gamesData");
+
+const { STAGES } = require("../../utils/constants");
 
 async function clearGameDetails(all) {
 	return await clearGamesData(all);
@@ -73,3 +77,29 @@ async function updateReceivedWordDetails(gameID, word, wordPoints) {
 	}
 }
 exports.updateReceivedWordDetails = updateReceivedWordDetails;
+
+async function updateReceivedCanvasPaths(gameID, wordPoints, canvasPaths) {
+	try {
+		const gameDetails = await getGameByID(gameID);
+
+		if (gameDetails.length === 0) {
+			return { gameNotFound: true };
+		}
+
+		gameDetails["drawingSessionDetails"]["canvasPaths"] = canvasPaths;
+
+		let resultFromData = await setActiveGame(gameDetails, false);
+
+		if (!resultFromData.acknowledged || resultFromData.modifiedCount !== 1) {
+			return { gameNotUpdated: true };
+		}
+
+		setStagesState(STAGES.GUESSING, true);
+
+		return { succuss: true };
+	} catch (err) {
+		console.log("Error in updateReceivedCanvasPaths()");
+		throw err;
+	}
+}
+exports.updateReceivedCanvasPaths = updateReceivedCanvasPaths;
