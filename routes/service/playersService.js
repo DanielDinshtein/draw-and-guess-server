@@ -2,10 +2,10 @@ const { setStagesState } = require("./healthService");
 
 const { getPendingGame, addPendingGame, setActiveGame } = require("../data/gamesData");
 
-const { Game } = require("../../model/gameModel");
-const { Player } = require("../../model/playerModel");
-const { GameTimes } = require("../../model/gameTimesModel");
-const { DrawDetails } = require("../../model/drawDetails");
+const { Game } = require("../../models/oldModels/gameModel");
+const { Player } = require("../../models/oldModels/playerModel");
+const { GameTimes } = require("../../models/oldModels/gameTimesModel");
+const { DrawDetails } = require("../../models/oldModels/drawDetails");
 
 const { STAGES } = require("../../utils/constants");
 

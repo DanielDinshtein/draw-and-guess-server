@@ -5,7 +5,15 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 require("dotenv").config();
+const mongoose = require("mongoose");
 
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error: "));
+db.once("open", function () {
+	console.log("Connected successfully");
+});
 
 var indexRouter = require("./routes/index");
 var playersRouter = require("./routes/players");
@@ -36,6 +44,42 @@ app.use("/", indexRouter);
 app.use("/players", playersRouter);
 app.use("/games", gamesRouter);
 app.use("/health", healthRouter);
+
+const userModel = require("./models/userModel");
+const gameSessionsModel = require("./models/gameSessionsModel");
+
+app.post("/add_game", async (request, response) => {
+	const gameSession = new gameSessionsModel(request.body);
+
+	try {
+		await gameSession.save();
+		response.send(gameSession);
+	} catch (error) {
+		response.status(500).send(error);
+	}
+});
+
+
+app.post("/add_user", async (request, response) => {
+	const user = new userModel(request.body);
+
+	try {
+		await user.save();
+		response.send(user);
+	} catch (error) {
+		response.status(500).send(error);
+	}
+});
+
+app.get("/users", async (request, response) => {
+	const users = await userModel.find({});
+
+	try {
+		response.send(users);
+	} catch (error) {
+		response.status(500).send(error);
+	}
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
