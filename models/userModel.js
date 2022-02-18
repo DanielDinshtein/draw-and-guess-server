@@ -9,15 +9,15 @@ const UserSchema = new Schema({
 	},
 	inActiveSession: {
 		type: Boolean,
-		default: false,
+		default: true,
 	},
 	gameSession: {
 		type: Schema.Types.ObjectId,
 		ref: "gameSessions",
 	},
-	stage: {
-		type: Schema.Types.ObjectId,
-		ref: "gameStage",
+	role: {
+		type: String,
+		enum: ["draw", "guess"],
 	},
 });
 

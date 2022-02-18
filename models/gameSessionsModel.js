@@ -5,16 +5,23 @@ const Schema = mongoose.Schema;
 const GameSessionsSchema = new Schema({
 	isActive: {
 		type: Boolean,
-		default: false,
+		default: true,
 	},
-	users: [
-		{
-			user: {
-				type: Schema.Types.ObjectId,
-				ref: "users",
+	users: {
+		type: [
+			{
+				user: {
+					type: Schema.Types.ObjectId,
+					ref: "users",
+				},
 			},
-		},
-	],
+		],
+		default: [],
+	},
+	gameStage: {
+		type: Schema.Types.ObjectId,
+		ref: "gameStage",
+	},
 	totalPoints: {
 		type: Number,
 		default: 0,

@@ -3,18 +3,17 @@ const Schema = mongoose.Schema;
 
 //Create Schema
 const GameStageSchema = new Schema({
-	name: {
-		type: String,
-        required: true
-	},
 	word: {
 		type: String,
+		default: "",
 	},
 	wordPoints: {
 		type: Number,
+		default: 0,
 	},
 	canvasPaths: {
 		type: Array,
+		default: [],
 	},
 });
 
