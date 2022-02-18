@@ -3,6 +3,7 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
+const session = require("client-sessions");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
@@ -29,6 +30,8 @@ db.once("open", function () {
 	console.log("Connected successfully");
 });
 
+const User = require("./models/userModel");
+
 //* ------------------------------ express Configuration ------------------------------ *//
 
 var app = express();
@@ -50,6 +53,36 @@ const corsConfig = {
 
 app.use(cors(corsConfig));
 app.options("*", cors(corsConfig));
+
+app.use(
+	session({
+		cookieName: "session", // the cookie key name
+		secret: process.env.COOKIE_SECRET, // the encryption key
+		duration: 24 * 60 * 60 * 1000, // expired after 20 sec
+		activeDuration: 1000 * 60 * 5, // if expiresIn < activeDuration,
+		cookie: {
+			httpOnly: false,
+		},
+		//the session will be extended by activeDuration milliseconds
+	})
+);
+
+//* ------------------------------ Cookie middleware ------------------------------ *//
+
+app.use(function (req, res, next) {
+	if (req.session && req.session.user_id) {
+		User.find({})
+			.then((users) => {
+				if (users.find((x) => x._id === req.session.user_id)) {
+					req.user_id = req.session.user_id;
+				}
+				next();
+			})
+			.catch((error) => next());
+	} else {
+		next();
+	}
+});
 
 //* ------------------------------ Routings ------------------------------ *//
 
