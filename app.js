@@ -3,7 +3,9 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
-const session = require("client-sessions");
+var session = require("express-session");
+var bodyParser = require("body-parser");
+
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
@@ -46,9 +48,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+app.use(bodyParser.json());
+
+//* ------------------------------ Cors & session ------------------------------ *//
+
 const corsConfig = {
 	origin: true,
+	methods: "GET,PUT,POST",
 	credentials: true,
+	optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsConfig));
@@ -56,16 +64,29 @@ app.options("*", cors(corsConfig));
 
 app.use(
 	session({
-		cookieName: "session", // the cookie key name
-		secret: process.env.COOKIE_SECRET, // the encryption key
-		duration: 24 * 60 * 60 * 1000, // expired after 20 sec
-		activeDuration: 1000 * 60 * 5, // if expiresIn < activeDuration,
+		secret: process.env.COOKIE_SECRET,
+		resave: false,
+		saveUninitialized: false,
 		cookie: {
-			httpOnly: false,
+			httpOnly: false, // key
+			maxAge: null,
 		},
-		//the session will be extended by activeDuration milliseconds
 	})
 );
+
+// Add headers before the routes are defined
+app.use(function (req, res, next) {
+
+	// res.setHeader("Access-Control-Expose-Headers", "Cookie, Set-Cookie, session, userID, sessionID");
+	res.setHeader("Access-Control-Expose-Headers", "userID, gameID");
+
+	// Set to true if you need the website to include cookies in the requests sent
+	// to the API (e.g. in case you use sessions)
+	res.setHeader("Access-Control-Allow-Credentials", true);
+
+	// Pass to next layer of middleware
+	next();
+});
 
 //* ------------------------------ Cookie middleware ------------------------------ *//
 
@@ -73,7 +94,7 @@ app.use(function (req, res, next) {
 	if (req.session && req.session.user_id) {
 		User.find({})
 			.then((users) => {
-				if (users.find((x) => x._id === req.session.user_id)) {
+				if (users.find((x) => JSON.stringify(x._id) === req.session.user_id)) {
 					req.user_id = req.session.user_id;
 				}
 				next();
