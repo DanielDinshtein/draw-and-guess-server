@@ -3,17 +3,24 @@ var router = express.Router();
 
 const CheckStage = require("../models/checkStageModel");
 
-const { checkStageStatues } = require("./service/healthService");
+const { checkStageStatues, checkHealth } = require("./service/healthService");
 const { getCanvasPaths, getWordDetails, removeUserStage } = require("./service/gameStageService");
 const { getGameStartTime } = require("./service/gameSessionsService");
 
-router.get("/", function (req, res, next) {
-	const userID = req.header("userID");
+router.get("/", async function (req, res, next) {
+	try {
+		const userID = req.header("userID");
+		const gameID = req.header("gameID");
 
-	if (req.user_id === req.session.user_id) {
-		res.status(200).send();
-	} else {
-		res.status(500).send();
+		const active = await checkHealth(gameID, userID);
+
+		if (active) {
+			res.status(202).send({ statues: 202 });
+		} else {
+			res.status(500).send({ statues: 200 });
+		}
+	} catch (err) {
+		next(err);
 	}
 });
 

@@ -7,14 +7,28 @@ const HealthSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "gameSessions",
 	},
-	lastHealthCheck: {
+	user1: {
+		type: Schema.Types.ObjectId,
+		ref: "users",
+		default: null,
+	},
+	user1_lastHealthCheck: {
 		type: Date,
 		default: Date.now,
 	},
-    notifyCancel: {
-        type: Boolean,
-        default: false
-    },
+	user2: {
+		type: Schema.Types.ObjectId,
+		ref: "users",
+		default: null,
+	},
+	user2_lastHealthCheck: {
+		type: Date,
+		default: Date.now,
+	},
+	notifyCancel: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 module.exports = Health = mongoose.model("health", HealthSchema);

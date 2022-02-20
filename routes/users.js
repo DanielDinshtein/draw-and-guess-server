@@ -1,6 +1,12 @@
 var express = require("express");
 var router = express.Router();
 
+const User = require("../models/userModel");
+const GameStage = require("../models/gameStageModel");
+const Health = require("../models/healthModel");
+const CheckStage = require("../models/checkStageModel");
+const GameSessions = require("../models/gameSessionsModel");
+
 const { loginUser } = require("./service/usersService");
 
 /* GET users listing. */
@@ -33,10 +39,6 @@ router.post("/login", async (req, res, next) => {
 //* ------------------------------ Testing ------------------------------ *//
 
 // TODO: Remove
-const GameSessions = require("../models/gameSessionsModel");
-const CheckStage = require("../models/checkStageModel");
-const GameStage = require("../models/gameStageModel");
-const User = require("../models/userModel");
 
 router.post("/delete", async (req, res, next) => {
 	try {
@@ -44,6 +46,7 @@ router.post("/delete", async (req, res, next) => {
 		await CheckStage.remove({});
 		await GameStage.remove({});
 		await User.remove({});
+		await Health.remove({});
 		res.status(200).send({ status: 200 });
 	} catch (err) {
 		next(err);

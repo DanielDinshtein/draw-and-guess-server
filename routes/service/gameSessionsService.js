@@ -1,6 +1,7 @@
 const GameStage = require("../../models/gameStageModel");
 const CheckStage = require("../../models/checkStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
+const Health = require("../../models/healthModel");
 
 const { updateUserStage } = require("./healthService");
 const { ObjectId } = require("mongodb");
@@ -38,6 +39,9 @@ async function addUserToGame(user) {
 			await checkStage.save();
 
 			await updateUserStage(gameSession.users[0], "waiting", true);
+
+			const healthChecker = new Health({ gameSession: gameSession, user1: gameSession.users[0], user2: user });
+			await healthChecker.save();
 		}
 
 		await gameSession.save();
