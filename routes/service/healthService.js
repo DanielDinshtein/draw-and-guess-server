@@ -1,5 +1,5 @@
 const User = require("../../models/userModel");
-const CheckStage = require("../../models/CheckStageModel");
+const CheckStage = require("../../models/checkStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
 
 const { ObjectId } = require("mongodb");

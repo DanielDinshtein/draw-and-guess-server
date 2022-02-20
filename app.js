@@ -56,7 +56,7 @@ const corsConfig = {
 	origin: true,
 	methods: "GET,PUT,POST",
 	credentials: true,
-	optionsSuccessStatus: 200,
+	optionsSuccessStatus: 202,
 };
 
 app.use(cors(corsConfig));

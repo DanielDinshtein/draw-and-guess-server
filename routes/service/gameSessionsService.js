@@ -1,5 +1,5 @@
 const GameStage = require("../../models/gameStageModel");
-const CheckStage = require("../../models/CheckStageModel");
+const CheckStage = require("../../models/checkStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
 
 const { updateUserStage } = require("./healthService");
