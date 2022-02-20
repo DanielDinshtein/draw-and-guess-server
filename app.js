@@ -52,14 +52,14 @@ app.use(bodyParser.json());
 //* ------------------------------ Cors & session ------------------------------ *//
 
 const corsConfig = {
-	origin: "https://draw-guess-app.herokuapp.com/",
+	origin: true,
 	methods: "GET,PUT,POST",
 	credentials: true,
 	optionsSuccessStatus: 202,
 };
 
 app.use(cors(corsConfig));
-app.options("*", cors(corsConfig));
+// app.options("*", cors(corsConfig));
 
 app.use(
 	session({
@@ -75,7 +75,6 @@ app.use(
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
-
 	// res.setHeader("Access-Control-Expose-Headers", "Cookie, Set-Cookie, session, userID, sessionID");
 	res.setHeader("Access-Control-Expose-Headers", "userID, gameID");
 
@@ -111,7 +110,6 @@ app.use("/health", healthRouter);
 
 app.use("/users", usersRouter);
 app.use("/gameStage", gameStageRouter);
-
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
