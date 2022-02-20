@@ -34,12 +34,14 @@ router.post("/login", async (req, res, next) => {
 
 // TODO: Remove
 const GameSessions = require("../models/gameSessionsModel");
+const CheckStage = require("../models/checkStageModel");
 const GameStage = require("../models/gameStageModel");
 const User = require("../models/userModel");
 
 router.post("/delete", async (req, res, next) => {
 	try {
 		await GameSessions.remove({});
+		await CheckStage.remove({});
 		await GameStage.remove({});
 		await User.remove({});
 		res.status(200).send({ status: 200 });

@@ -3,7 +3,8 @@ var router = express.Router();
 
 const { STAGES } = require("../utils/constants");
 
-const { canChangeStage, setStagesState } = require("./service/healthService");
+const { getGameStartTime } = require("./service/gameSessionsService");
+const { checkStageStatues } = require("./service/healthService");
 
 router.get("/", function (req, res, next) {
 	const userID = req.header("userID");
@@ -15,39 +16,37 @@ router.get("/", function (req, res, next) {
 	}
 });
 
-router.post("/wordChoosingTest", function (req, res, next) {
-	const { changeState } = req.body;
+router.get("/wordChoosing", async function (req, res, next) {
+	const userID = req.header("userID");
 
-	if (changeState) {
-		setStagesState(STAGES.WORD_CHOOSING, true);
-		res.status(200).send({ status: 200, success: true });
-	} else {
-		res.status(400).send({ status: 400, success: false });
-	}
-});
+	const canChange = await checkStageStatues(userID);
 
-router.get("/wordChoosing", function (req, res, next) {
-	if (canChangeStage(STAGES.WORD_CHOOSING)) {
+	if (canChange) {
 		res.status(204).send();
 	} else {
 		res.status(200).send();
 	}
 });
 
-router.post("/wordChoosing", function (req, res, next) {
-	const { changeState } = req.body;
+router.post("/wordChoosing", async function (req, res, next) {
+	const { gameID, userID, changeState } = req.body;
 
 	if (changeState) {
-		setStagesState(STAGES.WORD_CHOOSING, false);
-		res.status(200).send({ status: 200, success: true });
+		// TODO: Update or Remove
+		const startTime = await getGameStartTime(gameID);
+		res.status(200).send({ status: 200, startTime: startTime });
 	} else {
 		res.status(400).send({ status: 400, success: false });
 	}
 });
 
-router.get("/guessing", function (req, res, next) {
-	if (canChangeStage(STAGES.GUESSING)) {
-		res.status(500).send();
+router.get("/guessing", async function (req, res, next) {
+	const userID = req.header("userID");
+
+	const canChange = await checkStageStatues(userID);
+
+	if (canChange) {
+		res.status(204).send();
 	} else {
 		res.status(200).send();
 	}
