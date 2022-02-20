@@ -52,7 +52,7 @@ app.use(bodyParser.json());
 //* ------------------------------ Cors & session ------------------------------ *//
 
 const corsConfig = {
-	origin: true,
+	origin: "https://draw-guess-app.herokuapp.com/",
 	methods: "GET,PUT,POST",
 	credentials: true,
 	optionsSuccessStatus: 202,
