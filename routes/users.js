@@ -7,7 +7,8 @@ const Health = require("../models/healthModel");
 const CheckStage = require("../models/checkStageModel");
 const GameSessions = require("../models/gameSessionsModel");
 
-const { loginUser } = require("./service/usersService");
+const { loginUser, logout } = require("./service/usersService");
+const { ObjectId } = require("mongodb");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
@@ -39,7 +40,6 @@ router.post("/login", async (req, res, next) => {
 //* ------------------------------ Testing ------------------------------ *//
 
 // TODO: Remove
-
 router.post("/delete", async (req, res, next) => {
 	try {
 		await GameSessions.remove({});
@@ -55,11 +55,13 @@ router.post("/delete", async (req, res, next) => {
 
 //* ------------------------------ /logout ------------------------------ *//
 
-router.post("/logout", function (req, res) {
-	// TODO: What about this?
+router.post("/logout", async function (req, res) {
+	const { gameID, userID } = req.body;
 
-	req.session.reset(); // reset the session info --> send cookie when  req.session == undefined!!
-	console.log(req.session);
+	await logout(new ObjectId(gameID), new ObjectId(userID));
+
+	req.session.destroy(); // reset the session info --> send cookie when  req.session == undefined!!
+
 	res.send({ success: true, message: "logout succeeded" });
 });
 

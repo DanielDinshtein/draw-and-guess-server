@@ -45,7 +45,6 @@ async function checkHealth(gameID, userID) {
 				const timeElapsed_1 = parseInt((new Date() - new Date(sessionHealth.user2_lastHealthCheck)) / 1000);
 
 				if (timeElapsed_1 > 20) {
-					console.log("time Elapsed 2");
 					await setNotifyCancel(sessionHealth._id);
 					await setUserInactive(ObjectGameID);
 					await setUserInactive(ObjectUserID);
@@ -55,11 +54,9 @@ async function checkHealth(gameID, userID) {
 				const updatedHealth = await Health.findOneAndUpdate({ _id: sessionHealth._id }, { user1_lastHealthCheck: new Date() }, { new: true });
 				await updatedHealth.save();
 			} else if (JSON.stringify(sessionHealth.user2) == JSON.stringify(ObjectUserID)) {
-				console.log("user2 equal");
 				const timeElapsed_2 = parseInt((new Date() - new Date(sessionHealth.user1_lastHealthCheck)) / 1000);
 
 				if (timeElapsed_2 > 20) {
-					console.log("time Elapsed 1");
 					await setNotifyCancel(sessionHealth._id);
 					await setUserInactive(ObjectGameID);
 					await setUserInactive(ObjectUserID);

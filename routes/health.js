@@ -17,7 +17,7 @@ router.get("/", async function (req, res, next) {
 		if (active) {
 			res.status(202).send({ statues: 202 });
 		} else {
-			res.status(500).send({ statues: 200 });
+			res.status(406).send({ statues: 406 });
 		}
 	} catch (err) {
 		next(err);

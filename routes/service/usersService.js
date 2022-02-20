@@ -1,7 +1,9 @@
 const { ObjectId } = require("mongodb");
 const User = require("../../models/userModel");
+const CheckStage = require("../../models/checkStageModel");
 
 const { addUserToGame } = require("./gameSessionsService");
+const { setUserInactive, setGameInactive } = require("./healthService");
 
 async function loginUser(username) {
 	try {
@@ -41,3 +43,14 @@ async function updateUserRole(userID, role) {
 	}
 }
 exports.updateUserRole = updateUserRole;
+
+async function logout(gameID, userID) {
+	try {
+		await setGameInactive(gameID);
+		await setUserInactive(userID);
+	} catch (err) {
+		console.log("err in /users -> updateUserRole\n", err);
+		throw err;
+	}
+}
+exports.logout = logout;
