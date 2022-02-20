@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const { addPlayerToGame } = require("./service/playersService");
+const { addPlayerToGame } = require("./service/oldServices/playersService");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {

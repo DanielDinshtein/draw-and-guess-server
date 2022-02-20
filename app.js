@@ -21,6 +21,7 @@ var gamesRouter = require("./routes/games");
 var healthRouter = require("./routes/health");
 
 var usersRouter = require("./routes/users");
+var gameStageRouter = require("./routes/gameStage");
 
 //* ------------------------------ MongoDB- mongoose connection ------------------------------ *//
 
@@ -113,6 +114,7 @@ app.use("/games", gamesRouter);
 app.use("/health", healthRouter);
 
 app.use("/users", usersRouter);
+app.use("/gameStage", gameStageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

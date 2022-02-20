@@ -1,13 +1,13 @@
-const { setStagesState } = require("./healthService");
+const { setStagesState } = require("../healthService");
 
-const { getPendingGame, addPendingGame, setActiveGame } = require("../data/gamesData");
+const { getPendingGame, addPendingGame, setActiveGame } = require("../../data/gamesData");
 
-const { Game } = require("../../models/oldModels/gameModel");
-const { Player } = require("../../models/oldModels/playerModel");
-const { GameTimes } = require("../../models/oldModels/gameTimesModel");
-const { DrawDetails } = require("../../models/oldModels/drawDetails");
+const { Game } = require("../../../models/oldModels/gameModel");
+const { Player } = require("../../../models/oldModels/playerModel");
+const { GameTimes } = require("../../../models/oldModels/gameTimesModel");
+const { DrawDetails } = require("../../../models/oldModels/drawDetails");
 
-const { STAGES } = require("../../utils/constants");
+const { STAGES } = require("../../../utils/constants");
 
 async function addPlayerToGame(username) {
 	if (!username) {

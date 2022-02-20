@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const User = require("../../models/userModel");
 
 const { addUserToGame } = require("./gameSessionsService");
@@ -26,3 +27,17 @@ async function loginUser(username) {
 	}
 }
 exports.loginUser = loginUser;
+
+async function updateUserRole(userID, role) {
+	try {
+		const user = await User.findOneAndUpdate({ _id: new ObjectId(userID) }, { role: role }, { new: true });
+
+		await user.save();
+
+		return user;
+	} catch (err) {
+		console.log("err in /users -> updateUserRole\n", err);
+		throw err;
+	}
+}
+exports.updateUserRole = updateUserRole;

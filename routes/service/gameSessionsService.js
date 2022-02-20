@@ -35,6 +35,7 @@ async function addUserToGame(user) {
 			checkStage = new CheckStage({ user: user, gameStage: "guessing" });
 			await checkStage.save();
 
+			//  TODO: Need Delete...
 			await updateUserStage(gameSession.users[0]);
 		}
 
@@ -64,3 +65,22 @@ async function getGameStartTime(gameID, userID) {
 	}
 }
 exports.getGameStartTime = getGameStartTime;
+
+async function getGame(gameID) {
+	try {
+		const games = await GameSessions.find({ _id: new ObjectId(gameID) });
+
+		if (games.length === 0) {
+			// TODO: What with this?
+			return;
+		}
+
+		const game = games[0];
+
+		return game;
+	} catch (err) {
+		console.log("err in /gameSessions -> getGame\n", err);
+		throw err;
+	}
+}
+exports.getGame = getGame;

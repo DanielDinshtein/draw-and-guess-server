@@ -8,8 +8,8 @@ const { ObjectId } = require("mongodb");
 
 /****  State Checker   ****/
 
-async function checkStageStatues(userID) {
-	const userStatues = await CheckStage.find({ user: new ObjectId(userID) });
+async function checkStageStatues(userID, stage) {
+	const userStatues = await CheckStage.find({ user: new ObjectId(userID), gameStage: stage });
 
 	if (userStatues.length === 0) {
 		// TODO: What with this?
@@ -26,8 +26,8 @@ exports.checkStageStatues = checkStageStatues;
 
 /****  State Updates   ****/
 
-async function updateUserStage(userID, toStage) {
-	const userStageStatues = await CheckStage.findOneAndUpdate({ user: userID }, { gameStage: toStage, canChangeStage: true }, { new: true });
+async function updateUserStage(userID, toStage, canChangeStage = true) {
+	const userStageStatues = await CheckStage.findOneAndUpdate({ user: userID }, { gameStage: toStage, canChangeStage: canChangeStage }, { new: true });
 
 	// TODO:  Maybe check if updated
 	await userStageStatues.save();
