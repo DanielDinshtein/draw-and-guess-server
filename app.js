@@ -67,7 +67,7 @@ app.use(
 		resave: false,
 		saveUninitialized: false,
 		cookie: {
-			httpOnly: false, // key
+			httpOnly: false, //
 			maxAge: null,
 		},
 	})
