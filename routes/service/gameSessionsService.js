@@ -5,6 +5,8 @@ const GameSessions = require("../../models/gameSessionsModel");
 const { updateUserStage } = require("./healthService");
 const { ObjectId } = require("mongodb");
 
+/****       Setters       ****/
+
 async function addUserToGame(user) {
 	try {
 		let gameStage;
@@ -35,17 +37,42 @@ async function addUserToGame(user) {
 			checkStage = new CheckStage({ user: user, gameStage: "guessing" });
 			await checkStage.save();
 
-			//  TODO: Need Delete...
-			await updateUserStage(gameSession.users[0]);
+			await updateUserStage(gameSession.users[0], "waiting", true);
 		}
 
 		await gameSession.save();
 	} catch (err) {
-		console.log("err in /gameSessions -> addUserToGame\n", err);
+		console.log("err in /gameSessionsService -> addUserToGame\n", err);
 		throw err;
 	}
 }
 exports.addUserToGame = addUserToGame;
+
+async function setWordPoints(gameID, wordPoints) {
+	try {
+		const games = await GameSessions.find({ _id: new ObjectId(gameID) });
+
+		if (games.length === 0) {
+			// TODO: What with this?
+			return false;
+		}
+
+		const updatedGamePoints = games[0].totalPoints + parseInt(wordPoints);
+
+		const updatedGame = await GameSessions.findOneAndUpdate({ _id: games[0]._id }, { totalPoints: updatedGamePoints }, { new: true });
+
+		await updatedGame.save();
+		return updatedGamePoints;
+	} catch (err) {
+		console.log("err in /gameSessionsService -> setWordPoints\n", err);
+		throw err;
+	}
+}
+exports.setWordPoints = setWordPoints;
+
+/***************************/
+
+/****       Getters       ****/
 
 async function getGameStartTime(gameID, userID) {
 	try {
@@ -84,3 +111,5 @@ async function getGame(gameID) {
 	}
 }
 exports.getGame = getGame;
+
+/***************************/

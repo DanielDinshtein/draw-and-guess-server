@@ -1,12 +1,14 @@
 var express = require("express");
 var router = express.Router();
 
+const User = require("../models/userModel");
 const CheckStage = require("../models/checkStageModel");
 
-const { setDrawStage } = require("./service/gameStageService");
+const { setDrawStage, removeUserStage } = require("./service/gameStageService");
 const { updateUserRole } = require("./service/usersService");
 const { updateUserStage } = require("./service/healthService");
-const { getGame } = require("./service/gameSessionsService");
+const { setWordPoints } = require("./service/gameSessionsService");
+const { ObjectId } = require("mongodb");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
@@ -25,23 +27,38 @@ router.post("/draw", async (req, res, next) => {
 			return;
 		}
 
+		const users = await User.find({ gameSession: new ObjectId(gameID), role: "guess" });
+
+		const secondUser = users[0];
+
 		const user = await updateUserRole(userID, "guess");
 
 		const checkStage = new CheckStage({ user: user, gameStage: "guessing" });
 		await checkStage.save();
 
-		const game = await getGame(gameID);
-
-		let secondUser;
-		if (JSON.stringify(game.users[0]._id) === userID) {
-			secondUser = game.users[0];
-		} else {
-			secondUser = game.users[1];
-		}
-
 		await updateUserStage(secondUser, "guessing", true);
 
 		res.status(200).send({ status: 200 });
+	} catch (err) {
+		next(err);
+	}
+});
+
+router.post("/guess", async (req, res, next) => {
+	const { gameID, userID, wordPoints } = req.body;
+	try {
+		const updatedGamePoints = await setWordPoints(gameID, wordPoints);
+
+		if (!updatedGamePoints) {
+			res.status(400).send({ status: 400 });
+			return;
+		}
+
+		await updateUserRole(userID, "draw");
+
+		await removeUserStage(userID);
+
+		res.status(200).send({ status: 200, totalPoints: updatedGamePoints });
 	} catch (err) {
 		next(err);
 	}

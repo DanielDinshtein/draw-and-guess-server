@@ -1,8 +1,10 @@
+const User = require("../../models/userModel");
+const CheckStage = require("../../models/checkStageModel");
 const GameStage = require("../../models/gameStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
 const { ObjectId } = require("mongodb");
 
-/****       Setter       ****/
+/****       Setters       ****/
 
 async function setDrawStage(gameID, word, wordPoints, canvasPaths) {
 	try {
@@ -31,9 +33,26 @@ async function setDrawStage(gameID, word, wordPoints, canvasPaths) {
 }
 exports.setDrawStage = setDrawStage;
 
+async function removeUserStage(userID) {
+	try {
+		const users = await User.find({ _id: new ObjectId(userID) });
+
+		const user = users[0];
+
+		CheckStage.findOneAndRemove({ user: user }, function (err) {
+			if (err) console.log(err);
+			console.log("Successful deletion");
+		});
+	} catch (err) {
+		console.log("err in /gameStageService -> removeUserStage\n", err);
+		throw err;
+	}
+}
+exports.removeUserStage = removeUserStage;
+
 /***************************/
 
-/****       Getter       ****/
+/****       Getters       ****/
 
 async function getCanvasPaths(gameID, userID) {
 	try {

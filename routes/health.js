@@ -1,10 +1,10 @@
 var express = require("express");
 var router = express.Router();
 
-const { STAGES } = require("../utils/constants");
+const CheckStage = require("../models/checkStageModel");
 
 const { checkStageStatues } = require("./service/healthService");
-const { getCanvasPaths, getWordDetails } = require("./service/gameStageService");
+const { getCanvasPaths, getWordDetails, removeUserStage } = require("./service/gameStageService");
 const { getGameStartTime } = require("./service/gameSessionsService");
 
 router.get("/", function (req, res, next) {
@@ -33,7 +33,7 @@ router.post("/wordChoosing", async function (req, res, next) {
 	const { gameID, userID, changeState } = req.body;
 
 	if (changeState) {
-		// TODO: Update or Remove
+		await removeUserStage(userID);
 		const startTime = await getGameStartTime(gameID);
 		res.status(200).send({ status: 200, startTime: startTime });
 	} else {

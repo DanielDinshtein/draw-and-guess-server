@@ -26,8 +26,8 @@ exports.checkStageStatues = checkStageStatues;
 
 /****  State Updates   ****/
 
-async function updateUserStage(userID, toStage, canChangeStage = true) {
-	const userStageStatues = await CheckStage.findOneAndUpdate({ user: userID }, { gameStage: toStage, canChangeStage: canChangeStage }, { new: true });
+async function updateUserStage(user, toStage, canChangeStage = true) {
+	const userStageStatues = await CheckStage.findOneAndUpdate({ user: user }, { gameStage: toStage, canChangeStage: canChangeStage }, { new: true });
 
 	// TODO:  Maybe check if updated
 	await userStageStatues.save();
