@@ -5,6 +5,8 @@ const Health = require("../../models/healthModel");
 
 const { ObjectId } = require("mongodb");
 
+const { removeUserStage } = require("./gameStageService");
+
 /************************   NEW  *********************************/
 
 /****  State Checker   ****/
@@ -46,8 +48,9 @@ async function checkHealth(gameID, userID) {
 
 				if (timeElapsed_1 > 20) {
 					await setNotifyCancel(sessionHealth._id);
-					await setUserInactive(ObjectGameID);
-					await setUserInactive(ObjectUserID);
+					// await setGameInactive(ObjectGameID);
+					await setUserInactive(sessionHealth.user2);
+					await removeUserStage(sessionHealth.user2);
 					return false;
 				}
 
@@ -58,8 +61,9 @@ async function checkHealth(gameID, userID) {
 
 				if (timeElapsed_2 > 20) {
 					await setNotifyCancel(sessionHealth._id);
-					await setUserInactive(ObjectGameID);
-					await setUserInactive(ObjectUserID);
+					// await setGameInactive(ObjectGameID);
+					await setUserInactive(sessionHealth.user1);
+					await removeUserStage(sessionHealth.user1);
 					return false;
 				}
 
