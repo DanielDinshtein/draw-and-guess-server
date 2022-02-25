@@ -1,8 +1,9 @@
+const { ObjectId } = require("mongodb");
+
 const User = require("../../models/userModel");
 const CheckStage = require("../../models/checkStageModel");
 const GameStage = require("../../models/gameStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
-const { ObjectId } = require("mongodb");
 
 /****       Setters       ****/
 
@@ -49,6 +50,28 @@ async function removeUserStage(userID) {
 	}
 }
 exports.removeUserStage = removeUserStage;
+
+async function removeGameStage(gameID) {
+	try {
+		const games = await GameSessions.find({ _id: gameID });
+
+		if (games.length === 0) {
+			// TODO: What with this?
+			return;
+		}
+
+		const gameStageID = games[0].gameStage;
+
+		GameStage.findOneAndRemove({ _id: gameStageID }, function (err) {
+			if (err) console.log(err);
+			console.log("Successful deletion");
+		});
+	} catch (err) {
+		console.log("err in /gameStageService -> removeGameStage\n", err);
+		throw err;
+	}
+}
+exports.removeGameStage = removeGameStage;
 
 /***************************/
 

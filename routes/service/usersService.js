@@ -1,9 +1,9 @@
 const { ObjectId } = require("mongodb");
 const User = require("../../models/userModel");
-const CheckStage = require("../../models/checkStageModel");
 
 const { addUserToGame } = require("./gameSessionsService");
-const { setUserInactive, setGameInactive } = require("./healthService");
+const { removeUserStage, removeGameStage } = require("./gameStageService");
+const { setUserInactive, setGameInactive, setNotifyCancel } = require("./healthService");
 
 async function loginUser(username) {
 	try {
@@ -46,8 +46,11 @@ exports.updateUserRole = updateUserRole;
 
 async function logout(gameID, userID) {
 	try {
+		await setNotifyCancel("", gameID);
 		await setGameInactive(gameID);
 		await setUserInactive(userID);
+		await removeUserStage(userID);
+		await removeGameStage(gameID);
 	} catch (err) {
 		console.log("err in /users -> updateUserRole\n", err);
 		throw err;

@@ -108,8 +108,13 @@ exports.updateUserStage = updateUserStage;
 
 /****  Setter In Active   ****/
 
-async function setNotifyCancel(healthID) {
-	const updatedHealth = await Health.findOneAndUpdate({ _id: healthID }, { notifyCancel: true }, { new: true });
+async function setNotifyCancel(healthID, gameID = null) {
+	let updatedHealth;
+	if (!gameID) {
+		updatedHealth = await Health.findOneAndUpdate({ _id: healthID }, { notifyCancel: true }, { new: true });
+	} else {
+		updatedHealth = await Health.findOneAndUpdate({ gameSession: gameID }, { notifyCancel: true }, { new: true });
+	}
 	await updatedHealth.save();
 }
 exports.setNotifyCancel = setNotifyCancel;
