@@ -5,7 +5,7 @@ const CheckStage = require("../models/checkStageModel");
 
 const { checkStageStatues, checkHealth } = require("./service/healthService");
 const { getCanvasPaths, getWordDetails, removeUserStage } = require("./service/gameStageService");
-const { getGameStartTime } = require("./service/gameSessionsService");
+const { getGameStartTime, getGamePoints } = require("./service/gameSessionsService");
 
 router.get("/", async function (req, res, next) {
 	try {
@@ -57,7 +57,8 @@ router.get("/guessing", async function (req, res, next) {
 	if (canChange) {
 		res.status(204).send({ status: 204 });
 	} else {
-		res.status(202).send({ status: 202 });
+		const points = await getGamePoints(gameID);
+		res.status(202).send({ status: 202, points: points });
 	}
 });
 

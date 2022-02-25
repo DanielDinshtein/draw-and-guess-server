@@ -116,4 +116,24 @@ async function getGame(gameID) {
 }
 exports.getGame = getGame;
 
+
+async function getGamePoints(gameID) {
+	try {
+		const games = await GameSessions.find({ _id: new ObjectId(gameID) });
+
+		if (games.length === 0) {
+			// TODO: What with this?
+			return;
+		}
+
+		const points = games[0].totalPoints;
+
+		return points;
+	} catch (err) {
+		console.log("err in /gameSessions -> getGamePoints\n", err);
+		throw err;
+	}
+}
+exports.getGamePoints = getGamePoints;
+
 /***************************/
