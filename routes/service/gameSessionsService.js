@@ -2,9 +2,9 @@ const GameStage = require("../../models/gameStageModel");
 const CheckStage = require("../../models/checkStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
 const Health = require("../../models/healthModel");
+const User = require("../../models/userModel");
 
 const { ObjectId } = require("mongodb");
-const { getUsername } = require("./usersService");
 const { updateUserStage } = require("./healthService");
 
 /****       Setters       ****/
@@ -164,7 +164,14 @@ async function getBestGame() {
 			}
 		}
 
-		const users = await getUsername(bestGame._id);
+		let users = [];
+		const users2 = await User.find({});
+
+		for (const user in users2) {
+			if (JSON.stringify(users2[user].gameSession) == JSON.stringify(bestGame._id)) {
+				users.push(users2[user].name);
+			}
+		}
 
 		const result = {
 			totalPoints: bestGame.totalPoints,
