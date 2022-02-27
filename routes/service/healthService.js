@@ -119,7 +119,9 @@ async function setNotifyCancel(healthID, gameID = null) {
 	} else {
 		updatedHealth = await Health.findOneAndUpdate({ gameSession: gameID }, { notifyCancel: true }, { new: true });
 	}
-	await updatedHealth.save();
+	if (updatedHealth) {
+		await updatedHealth.save();
+	}
 }
 exports.setNotifyCancel = setNotifyCancel;
 

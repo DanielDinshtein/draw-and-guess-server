@@ -52,7 +52,7 @@ async function logout(gameID, userID) {
 		await removeUserStage(userID);
 		await removeGameStage(gameID);
 	} catch (err) {
-		console.log("err in /users -> updateUserRole\n", err);
+		console.log("err in /users -> logout\n", err);
 		throw err;
 	}
 }
