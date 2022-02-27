@@ -3,8 +3,9 @@ const CheckStage = require("../../models/checkStageModel");
 const GameSessions = require("../../models/gameSessionsModel");
 const Health = require("../../models/healthModel");
 
-const { updateUserStage } = require("./healthService");
 const { ObjectId } = require("mongodb");
+const { getUsername } = require("./usersService");
+const { updateUserStage } = require("./healthService");
 
 /****       Setters       ****/
 
@@ -116,7 +117,6 @@ async function getGame(gameID) {
 }
 exports.getGame = getGame;
 
-
 async function getGamePoints(gameID) {
 	try {
 		const games = await GameSessions.find({ _id: new ObjectId(gameID) });
@@ -135,5 +135,48 @@ async function getGamePoints(gameID) {
 	}
 }
 exports.getGamePoints = getGamePoints;
+
+async function getBestGame() {
+	try {
+		const games = await GameSessions.find({ isActive: false });
+
+		if (games.length === 0) {
+			// TODO: What with this?
+			return;
+		}
+
+		var maxPoints = -1;
+		var bestGame;
+		var bestTime = 0;
+
+		for (const game in games) {
+			if (games[game].totalPoints > maxPoints) {
+				maxPoints = games[game].totalPoints;
+				bestGame = games[game];
+				bestTime = parseInt((new Date(games[game].endTime) - new Date(games[game].startTime)) / 1000);
+			} else if (games[game].totalPoints === maxPoints) {
+				gameTime = parseInt((new Date(games[game].endTime) - new Date(games[game].startTime)) / 1000);
+				if (gameTime < bestTime) {
+					bestTime = gameTime;
+					maxPoints = games[game].totalPoints;
+					bestGame = games[game];
+				}
+			}
+		}
+
+		const users = await getUsername(bestGame._id);
+
+		const result = {
+			totalPoints: bestGame.totalPoints,
+			gameTime: bestTime,
+			users,
+		};
+		return result;
+	} catch (err) {
+		console.log("err in /gameSessions -> getGamePoints\n", err);
+		throw err;
+	}
+}
+exports.getBestGame = getBestGame;
 
 /***************************/

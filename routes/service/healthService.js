@@ -124,13 +124,16 @@ async function setNotifyCancel(healthID, gameID = null) {
 exports.setNotifyCancel = setNotifyCancel;
 
 async function setGameInactive(gameID) {
-	const gameSession = await GameSessions.findOneAndUpdate({ _id: gameID }, { isActive: false }, { new: true });
+	const gameSession = await GameSessions.findOneAndUpdate({ _id: gameID }, { isActive: false, endTime: new Date() }, { new: true });
 	await gameSession.save();
 }
 exports.setGameInactive = setGameInactive;
 
 async function setUserInactive(userID) {
 	const users = await User.findOneAndUpdate({ _id: userID }, { inActiveSession: false }, { new: true });
+	if (!users) {
+		return;
+	}
 	await users.save();
 }
 exports.setUserInactive = setUserInactive;

@@ -57,3 +57,31 @@ async function logout(gameID, userID) {
 	}
 }
 exports.logout = logout;
+
+/***************************/
+
+/****       Getters       ****/
+
+async function getUsername(gameID) {
+	try {
+		let usernames = [];
+		const users2 = await User.find({ });
+
+		for( const user in users2) {
+
+			if (  JSON.stringify(users2[user].gameSession) == JSON.stringify(gameID)) {
+				usernames.push(users2[user].name);
+				console.log("Found!!")
+			}
+		}
+
+		if (usernames.length === 0) {
+			return;
+		}
+		return usernames;
+	} catch (err) {
+		console.log("err in /users -> getUsername\n", err);
+		throw err;
+	}
+}
+exports.getUsername = getUsername;
