@@ -8,7 +8,9 @@
     },
     "dependencies": {
         "body-parser": "^1.18.3",
+        "clean-css": "^3.4.28",
         "client-sessions": "^0.8.0",
+        "constantinople": "^3.0.2",
         "cookie-parser": "~1.4.4",
         "cors": "^2.8.5",
         "debug": "~2.6.9",
@@ -21,7 +23,9 @@
         "mongodb": "^4.3.1",
         "mongoose": "^6.2.2",
         "morgan": "~1.9.1",
-        "opn": "^6.0.0"
+        "opn": "^6.0.0",
+        "transformers": "^2.1.0",
+        "uglify-js": "^2.8.29"
     },
     "devDependencies": {
         "nodemon": "^2.0.15"
